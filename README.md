@@ -58,8 +58,8 @@ spec:
 Refer to [patch.yaml](https://github.com/h00lig4n/argocd-envsubst/blob/main/patch.yaml).
 ```
 env:
-  - name: MY_EXAMPLE_VARIABLE
-    value: my_example_variable_value
+  - name: DOMAIN_NAME
+    value: secret.domain.com
 ```
 
 ### external_sources.json
