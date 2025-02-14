@@ -1,21 +1,26 @@
-#Patch Verify this is correct
-containers:
-- name: envsubst
-  command: [/var/run/argocd/argocd-cmp-server]
-  image: h00lig4n/argocd-envsubst-plugin:latest
-  env:
-    - name: MY_EXAMPLE_VARIABLE
-      value: my_example_variable_value
-  securityContext:
-    runAsNonRoot: true
-    runAsUser: 999
-  volumeMounts:
-    - mountPath: /var/run/argocd
-      name: var-files
-    - mountPath: /home/argocd/cmp-server/plugins
-      name: plugins
-    - mountPath: /tmp
-      name: cmp-tmp
-volumes:
-- emptyDir: {}
-  name: cmp-tmp
+---
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: envsubst
+        command: [/var/run/argocd/argocd-cmp-server]
+        image: h00lig4n/argocd-envsubst-plugin:latest
+        env:
+          - name: MY_EXAMPLE_VARIABLE
+            value: my_example_variable_value
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+        volumeMounts:
+          - mountPath: /var/run/argocd
+            name: var-files
+          - mountPath: /home/argocd/cmp-server/plugins
+            name: plugins
+          - mountPath: /tmp
+            name: cmp-tmp
+      volumes:
+        - emptyDir: {}
+          name: cmp-tmp
