@@ -12,7 +12,7 @@ This plugin will run on all yaml files (note I forgot to add .yml) in an ArgoCD 
 It will also search for a file called external_source.json.
 
 ### Variable Definition
-It replaces environment variables in the form $VARIABLE or ${VARIABLE} with the value from the matching environment variable.
+It replaces environment variables in the form '$VARIABLE' or '${VARIABLE}' with the value from the matching environment variable.
 The following Ingress contains $DOMAIN_NAME, for example.
 ```
 apiVersion: networking.k8s.io/v1
