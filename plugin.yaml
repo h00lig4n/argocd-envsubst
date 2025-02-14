@@ -1,0 +1,38 @@
+  apiVersion: argoproj.io/v1alpha1
+  kind: ConfigManagementPlugin
+  metadata:
+    name: envsubst
+  spec:
+    init:
+      command: [sh]
+      args: [-c, "echo 'Initializing envsubst plugin...'" ]
+    generate:
+      command: [sh, -c]
+      args: 
+        - | 
+          clean_yaml() {
+            awk '{
+              if ($0 == "---") { print; blank=1; next   }
+              if (blank && NF == 0) next
+              blank=0
+              print
+            }' "$1" > "$1.tmp" && mv "$1.tmp" "$1"
+          }
+
+          #Replace variables
+          find . -type f -name '*.yaml' -exec sh -c 'echo "---"; envsubst < "$1"' _ {} \;
+
+          # Check if external_sources.json exists
+          if [ -f "external_sources.json" ]; then
+              jq -r '.[]' external_sources.json | while read -r url; do
+              # echo "---"
+              temp_file=$(mktemp)
+              curl -s "$url" > "$temp_file"
+              clean_yaml "$temp_file"
+              cat "$temp_file"
+              rm "$temp_file"
+          done
+          fi
+    discover:
+      find:
+        command: [sh,-c, find . -type f \( -name "external_sources.json" -o -name "*.yaml" \)] 
