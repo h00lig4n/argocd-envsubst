@@ -2,8 +2,10 @@
 *Disclaimer*: I take no responsibility for offending GitOps purests.
 
 ArgoCD ConfigManagementPlugin has two functions:
-1. Replacing variables in kubernetes yaml manifest files.
+1. Replacing environment variables in kubernetes yaml manifest files.
 2. Reading in external manifest yaml files to be synchonized with an application.
+
+It will run on ArgoCD Application sync.
 
 ## Configuration
 This plugin will run on all yaml files (note I forgot to add .yml) in an ArgoCD Application as Discovery is used.
@@ -11,6 +13,34 @@ It will also search for a file called external_source.json.
 
 ### Variable Definition
 It replaces environment variables in the form $VARIABLE or ${VARIABLE} with the value from the matching environment variable.
+The following Ingress contains $DOMAIN_NAME, for example.
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: esphome
+  namespace: hass
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: esp.$DOMAIN_NAME
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: esphome
+                port:
+                  number: 6052
+  tls:
+    - secretName: tls-certificate
+      hosts:
+        - esp.$DOMAIN_NAME
+```
+
 
 These can be defined either:
 1. On Application level by The Application definition in ArgoCD
