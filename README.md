@@ -1,5 +1,5 @@
 # argocd-envsubst
-*Disclaimer*: I take no responsibility for offending GitOps purests.
+*Disclaimer*: I take no responsibility for offending GitOps purists.
 
 This ArgoCD ConfigManagementPlugin has two functions:
 1. Replacing environment variables in kubernetes yaml manifest files.
