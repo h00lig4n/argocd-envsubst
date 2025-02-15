@@ -11,6 +11,7 @@
       args: 
         - | 
           clean_yaml() {
+            if [ ! -s "$1" ]; then return; fi 
             awk '{
               if ($0 == "---") { print; blank=1; next   }
               if (blank && NF == 0) next
@@ -20,12 +21,11 @@
           }
 
           #Replace variables
-          find . -type f -name '*.yaml' -exec sh -c 'echo "---"; envsubst < "$1"' _ {} \;
+          find . -type f \( -name '*.yaml' -o -name '*.yml' \) -exec sh -c 'echo "---"; envsubst < "$1"' _ {} \;
 
           # Check if external_sources.json exists
           if [ -f "external_sources.json" ]; then
               jq -r '.[]' external_sources.json | while read -r url; do
-              # echo "---"
               temp_file=$(mktemp)
               curl -s "$url" > "$temp_file"
               clean_yaml "$temp_file"
@@ -35,4 +35,4 @@
           fi
     discover:
       find:
-        command: [sh,-c, find . -type f \( -name "external_sources.json" -o -name "*.yaml" \)] 
+        command: ["sh", "-c", 'find . -type f \( -name "external_sources.json" -o -name "*.yaml" -o -name "*.yml" \)'] 

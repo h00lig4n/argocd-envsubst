@@ -1,19 +1,15 @@
-FROM --platform=$BUILDPLATFORM alpine:3.20
-
 ARG BUILDPLATFORM
+FROM alpine:3.20
 
 ENV BUILD_DEPS="gettext"  \
     RUNTIME_DEPS="libintl"
 
-
-#Install envsubst, jq and curl     
-RUN set -x && \
-    apk add --update $RUNTIME_DEPS && \
-    apk add --virtual build_deps $BUILD_DEPS &&  \
+RUN apk add --no-cache $RUNTIME_DEPS && \
+    apk add --no-cache --virtual .build-deps $BUILD_DEPS && \
     cp /usr/bin/envsubst /usr/local/bin/envsubst && \
-    apk del build_deps
-RUN apk add jq 
-RUN apk add curl
+    apk del .build-deps
+
+RUN apk add --no-cache jq curl
 
 WORKDIR /home/argocd/cmp-server/config/
 COPY plugin.yaml ./
