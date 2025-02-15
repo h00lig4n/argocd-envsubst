@@ -5,10 +5,14 @@ This ArgoCD ConfigManagementPlugin has two functions:
 1. Replacing environment variables in kubernetes yaml manifest files.
 2. Reading in external manifest yaml files to be synchonized with an application.
 
+
+
 It will run on ArgoCD Application sync.
 
 ## Configuration
-Container image is built for linux/amd64 and linux/arm64. It has only been tested on arm64.
+
+The [Container Image](https://hub.docker.com/repository/docker/h00lig4n/argocd-envsubst-plugin/general) is built for linux/amd64 and linux/arm64. 
+It has only been tested on arm64.
 This plugin will run on all yaml files (even yml).
 It will run for all applications as ArgoCD Application as Discovery is used.
 It will also search for a file called external_sources.json which should contain an array of URLs to remote yaml manifests.
