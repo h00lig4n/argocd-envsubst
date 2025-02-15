@@ -3,13 +3,15 @@
 
 This ArgoCD ConfigManagementPlugin has two functions:
 1. Replacing environment variables in kubernetes yaml manifest files.
-2. Reading in external manifest yaml (yaml/yml) files to be synchonized with an application.
+2. Reading in external manifest yaml files to be synchonized with an application.
 
 It will run on ArgoCD Application sync.
 
 ## Configuration
-This plugin will run on all yaml files (note I forgot to add .yml) in an ArgoCD Application as Discovery is used.
-It will also search for a file called external_source.json.
+Container image is built for linux/amd64 and linux/arm64. It has only been tested on arm64.
+This plugin will run on all yaml files (even yml).
+It will run for all applications as ArgoCD Application as Discovery is used.
+It will also search for a file called external_sources.json which should contain an array of URLs to remote yaml manifests.
 
 ### Variable Definition
 It replaces environment variables in the form '$VARIABLE' or '${VARIABLE}' with the value from the matching environment variable.
@@ -41,8 +43,7 @@ spec:
         - esp.$DOMAIN_NAME
 ```
 
-
-These can be defined either:
+Variables can be defined either:
 1. On Application level by The Application definition in ArgoCD
 ```
 apiVersion: argoproj.io/v1alpha1
@@ -55,7 +56,7 @@ spec:
           value: secret.domain.com
 ```
 2. They can be added directly to the sidecar environment variables when you patch the argocd-repo-server pod.
-Refer to [patch.yaml](https://github.com/h00lig4n/argocd-envsubst/blob/main/patch.yaml).
+Update [patch.yaml](https://github.com/h00lig4n/argocd-envsubst/blob/main/patch.yaml) with your own variables.
 ```
 env:
   - name: DOMAIN_NAME
@@ -63,10 +64,11 @@ env:
 ```
 
 ### external_sources.json
-Sometimes your application uses an externally hosted yaml manifest. Perhaps there is no chart or you just don't like helm. 
+Sometimes your application uses an externally hosted yaml manifest. Perhaps there is no chart available or you just don't like helm. 
+This functionality will allow you to add references to those yaml files in order for them to be included in Sync.
 
 1. Add a file called external_sources.json to the root of your repository.
-2. Populate it with a json array of the manifest urls you want to sync.
+2. Populate it with a json array of the manifest urls you want to sync. It expects a json array of strings, no parent object nor object array.
 **NOTE:**: When linking to a manifest in Github, you must use the RAW url, as shown in the example. It doesn't like HTML.
 ```
 ["https://raw.githubusercontent.com/h00lig4n/argocd-envsubst/refs/heads/main/patch.yaml","https://raw.githubusercontent.com/h00lig4n/k3s/refs/heads/main/esphome/deployment.yaml"]
