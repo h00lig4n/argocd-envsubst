@@ -3,7 +3,7 @@
 
 This ArgoCD ConfigManagementPlugin has two functions:
 1. Replacing environment variables in kubernetes yaml manifest files.
-2. Reading in external manifest yaml files to be synchonized with an application.
+2. Reading in external manifest yaml (yaml/yml) files to be synchonized with an application.
 
 It will run on ArgoCD Application sync.
 
